@@ -142,3 +142,42 @@ def scenario_simulation(request):
             }, status=500)
     
     return JsonResponse({'error': 'POST method required'}, status=405)
+
+
+def anomalies(request):
+    """Return anomaly detection results for a given location (GET)
+    Expects query param 'location'."""
+    if request.method != 'GET':
+        return JsonResponse({'error': 'GET method required'}, status=405)
+
+    location = request.GET.get('location', 'New York, NY')
+
+    try:
+        ml_manager = MLModelManager()
+
+        # Mock location data similar to ml_predictions
+        location_data = {
+            'location': location,
+            'aqi': 73,
+            'pm25': 25,
+            'pm10': 35,
+            'no2': 45,
+            'o3': 55,
+            'temperature': 24,
+            'humidity': 65,
+            'wind_speed': 15
+        }
+
+        # Use manager to get anomaly info (it will include 'anomaly_status' when available)
+        results = ml_manager.get_real_time_predictions(location_data)
+
+        anomaly_status = results.get('anomaly_status') if isinstance(results, dict) else None
+
+        return JsonResponse({
+            'location': location,
+            'anomaly_status': anomaly_status,
+            'models_trained': ml_manager.get_model_status().get('models_trained', {})
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

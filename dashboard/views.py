@@ -24,12 +24,12 @@ import pandas as pd
 def dashboard_home(request):
     """Main dashboard view with ML predictions"""
     ml_manager = MLModelManager()
-    
+
     # Get user's primary location or default
     user_location = UserLocationPreference.objects.filter(
         user=request.user, is_primary=True
     ).first()
-    
+
     location_name = user_location.location_name if user_location else 'New York, NY'
     
     # Mock current data (in production, fetch from APIs)

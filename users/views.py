@@ -43,6 +43,7 @@ def login_view(request):
             messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
+    # Render the modern login template (includes JS and CSRF handling)
     return render(request, 'users/login.html', {'form': form})
 
 

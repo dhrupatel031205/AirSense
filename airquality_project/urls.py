@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('landing.urls')),
-    path('users/', include('users.urls')),
+    path('auth/', include('users.urls')),  # Changed from 'users/' to 'auth/'
+    path('users/', include('users.urls')),  # Keep both for backward compatibility
     path('dashboard/', include('dashboard.urls')),
     path('api/ml/', include('dashboard.api_urls')),
     path('health-alerts/', include('health_alerts.urls')),

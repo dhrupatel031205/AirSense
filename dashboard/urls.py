@@ -26,5 +26,6 @@ urlpatterns = [
     # ML API endpoints
     path('api/ml/predictions/', api_views.ml_predictions, name='ml_predictions'),
     path('api/ml/scenarios/', api_views.scenario_simulation, name='scenario_simulation'),
+    path('api/ml/anomalies/', api_views.anomalies, name='anomalies'),
     path('api/ml/chat/', api_views.health_chat, name='health_chat'),
 ]
