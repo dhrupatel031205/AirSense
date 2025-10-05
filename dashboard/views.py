@@ -13,6 +13,7 @@ from .serializers import (
     UserLocationPreferenceSerializer, 
     MLPredictionSerializer
 )
+from .decorators import guest_allowed, authenticated_required
 from .ml.utils import get_location_predictions
 from utils.api_clients import fetch_current_air_quality
 from ml_models.ml_manager import MLModelManager
@@ -20,17 +21,19 @@ import json
 import pandas as pd
 
 
-@login_required
+@guest_allowed
 def dashboard_home(request):
-    """Main dashboard view with ML predictions"""
+    """Main dashboard view with ML predictions - supports guest users"""
     ml_manager = MLModelManager()
 
-    # Get user's primary location or default
-    user_location = UserLocationPreference.objects.filter(
-        user=request.user, is_primary=True
-    ).first()
-
-    location_name = user_location.location_name if user_location else 'New York, NY'
+    # Get user's primary location or default (guest users get default location)
+    if request.user.is_authenticated:
+        user_location = UserLocationPreference.objects.filter(
+            user=request.user, is_primary=True
+        ).first()
+        location_name = user_location.location_name if user_location else 'New York, NY'
+    else:
+        location_name = 'New York, NY'  # Default for guest users
     
     # Mock current data (in production, fetch from APIs)
     location_data = {
@@ -147,6 +150,7 @@ def dashboard_home(request):
         'aqi_category': 'Moderate',
         'location': location_name,
         'current_time': timezone.now(),
+        'is_guest': not request.user.is_authenticated,
         'weather': {
             'temperature': location_data['temperature'],
             'condition': 'Partly Cloudy',
@@ -169,7 +173,16 @@ def dashboard_home(request):
 home = dashboard_home
 
 
-@login_required
+@guest_allowed
+def guest_info(request):
+    """Information page for guest users"""
+    context = {
+        'title': 'Guest Access - AirSense',
+    }
+    return render(request, 'dashboard/guest_info.html', context)
+
+
+@authenticated_required
 def air_quality_monitoring(request):
     """Air quality monitoring page with real-time data"""
     user_locations = UserLocationPreference.objects.filter(user=request.user)
@@ -181,7 +194,7 @@ def air_quality_monitoring(request):
     return render(request, 'dashboard/monitoring.html', context)
 
 
-@login_required
+@authenticated_required
 def ml_predictions(request):
     """ML predictions page"""
     user_locations = UserLocationPreference.objects.filter(user=request.user)
@@ -200,7 +213,7 @@ def ml_predictions(request):
     return render(request, 'dashboard/predictions.html', context)
 
 
-@login_required
+@authenticated_required
 def user_locations(request):
     """Manage user location preferences"""
     locations = UserLocationPreference.objects.filter(user=request.user)
@@ -212,7 +225,7 @@ def user_locations(request):
     return render(request, 'dashboard/locations.html', context)
 
 
-@login_required
+@authenticated_required
 def add_location(request):
     """Add a new location preference"""
     if request.method == 'POST':
@@ -233,7 +246,7 @@ def add_location(request):
     return render(request, 'dashboard/add_location.html', context)
 
 
-@login_required
+@authenticated_required
 def delete_location(request, location_id):
     """Delete a location preference"""
     location = get_object_or_404(UserLocationPreference, id=location_id, user=request.user)

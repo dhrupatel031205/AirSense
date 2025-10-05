@@ -30,15 +30,49 @@
 {% block content %}
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Guest User Banner -->
+        {% if is_guest %}
+        <div class="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-4 shadow-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle text-xl mr-3"></i>
+                    <div>
+                        <h3 class="font-semibold">You're viewing as a guest</h3>
+                        <p class="text-blue-100 text-sm">Sign in to access personalized features, save locations, and get health alerts</p>
+                        <a href="{% url 'dashboard:guest_info' %}" class="text-blue-200 hover:text-white text-xs underline mt-1 inline-block">
+                            See what's available for guests →
+                        </a>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'users:login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                        Sign In
+                    </a>
+                    <a href="{% url 'users:register' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-400 transition-colors">
+                        Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
         <!-- Header -->
         <div class="mb-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-                        Welcome back, {{ user.first_name|default:user.username }}! 👋
+                        {% if is_guest %}
+                            Welcome to AirSense! 🌍
+                        {% else %}
+                            Welcome back, {{ user.first_name|default:user.username }}! 👋
+                        {% endif %}
                     </h1>
                     <p class="text-gray-600 dark:text-gray-400 mt-1">
-                        Here's your personalized air quality intelligence for today.
+                        {% if is_guest %}
+                            Explore real-time air quality data and AI predictions.
+                        {% else %}
+                            Here's your personalized air quality intelligence for today.
+                        {% endif %}
                     </p>
                 </div>
                 <div class="mt-4 sm:mt-0 flex items-center space-x-3">
@@ -409,6 +443,7 @@ function sendChatMessage() {
     // Send to API
     fetch('/dashboard/api/ml/chat/', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')

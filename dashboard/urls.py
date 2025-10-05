@@ -12,6 +12,7 @@ router.register(r'predictions', views.MLPredictionViewSet)
 urlpatterns = [
     # Web views
     path('', views.dashboard_home, name='home'),
+    path('guest-info/', views.guest_info, name='guest_info'),
     path('monitoring/', views.air_quality_monitoring, name='monitoring'),
     path('predictions/', views.ml_predictions, name='predictions'),
     path('locations/', views.user_locations, name='locations'),

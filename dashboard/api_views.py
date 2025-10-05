@@ -1,11 +1,9 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 from ml_models.ml_manager import MLModelManager
 import json
 
 @csrf_exempt
-@login_required
 def health_chat(request):
     """Health chatbot API endpoint"""
     if request.method != 'POST':
@@ -18,19 +16,27 @@ def health_chat(request):
         if not question:
             return JsonResponse({'error': 'Question is required'}, status=400)
         
-        # Get user profile for personalized responses
-        user_profile = {
-            'age': getattr(request.user, 'age', 30),
-            'conditions': []  # Would come from user health profile
-        }
+        # Get user profile for personalized responses (support guest users)
+        if hasattr(request, 'user') and request.user.is_authenticated:
+            user_profile = {
+                'age': getattr(request.user, 'age', 30),
+                'conditions': []  # Would come from user health profile
+            }
+        else:
+            # Guest/default profile
+            user_profile = {
+                'age': 30,
+                'conditions': []
+            }
         
         # Get current AQI (mock for now)
         current_aqi = 73
-        
+
         # Use ML manager for chatbot response
         ml_manager = MLModelManager()
+        # Allow the ML chatbot to answer for guests as well (limited personalization)
         response = ml_manager.chat_response(question, user_profile, current_aqi)
-        
+
         return JsonResponse({
             'response': response.get('message', get_fallback_response(question)),
             'confidence': response.get('confidence', 0.8)
