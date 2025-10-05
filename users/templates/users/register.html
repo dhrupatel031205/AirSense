@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - AirSense{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-bg {
+        background: linear-gradient(135deg, rgba(11, 61, 145, 0.95), rgba(102, 51, 153, 0.9)), 
+                    url('{% static "images/earth-from-space.jpg" %}') center/cover;
+    }
+    
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    
+    .floating-elements i {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.1);
+        animation: float 8s infinite ease-in-out;
+    }
+    
+    .floating-elements i:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .floating-elements i:nth-child(2) { top: 20%; right: 20%; animation-delay: 2s; }
+    .floating-elements i:nth-child(3) { bottom: 30%; left: 15%; animation-delay: 4s; }
+    .floating-elements i:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 6s; }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(120deg); }
+        66% { transform: translateY(-10px) rotate(240deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-600 to-blue-600">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <i class="fas fa-wind text-white text-2xl"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">
+                Join AirSense
+            </h1>
+            <p class="text-blue-100 mb-2">
+                Start monitoring air quality today
+            </p>
+            <div class="inline-flex items-center px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium backdrop-blur-sm text-white">
+                <i class="fas fa-shield-alt mr-2"></i>
+                NASA TEMPO Powered
+            </div>
+        </div>
+        
+        <!-- Registration Form -->
+        <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
+            <form method="post" class="space-y-6" id="register-form">
+                {% csrf_token %}
+                
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="id_first_name" class="block text-sm font-medium text-white mb-2">
+                            <i class="fas fa-user mr-1"></i>First Name
+                        </label>
+                        <input type="text" name="first_name" id="id_first_name"
+                               class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                        <div class="mt-1 text-sm text-red-300 hidden" id="first_name-error"></div>
+                    </div>
+                    <div>
+                        <label for="id_last_name" class="block text-sm font-medium text-white mb-2">
+                            <i class="fas fa-user mr-1"></i>Last Name
+                        </label>
+                        <input type="text" name="last_name" id="id_last_name"
+                               class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                        <div class="mt-1 text-sm text-red-300 hidden" id="last_name-error"></div>
+                    </div>
+                </div>
+                
+                <!-- Username -->
+                <div>
+                    <label for="id_username" class="block text-sm font-medium text-white mb-2">
+                        <i class="fas fa-at mr-1"></i>Username
+                    </label>
+                    <input type="text" name="username" id="id_username" required
+                           class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                    <div class="mt-1 text-sm text-red-300 hidden" id="username-error"></div>
+                    <p class="mt-1 text-sm text-blue-200">Choose a unique username for your AirSense profile</p>
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-white mb-2">
+                        <i class="fas fa-envelope mr-1"></i>Email Address
+                    </label>
+                    <input type="email" name="email" id="id_email" required
+                           class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                    <div class="mt-1 text-sm text-red-300 hidden" id="email-error"></div>
+                    <p class="mt-1 text-sm text-blue-200">We'll send air quality alerts to this email</p>
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <label for="id_password1" class="block text-sm font-medium text-white mb-2">
+                        <i class="fas fa-lock mr-1"></i>Password
+                    </label>
+                    <input type="password" name="password1" id="id_password1" required
+                           class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                    <div class="mt-1 text-sm text-red-300 hidden" id="password1-error"></div>
+                </div>
+                
+                <!-- Confirm Password -->
+                <div>
+                    <label for="id_password2" class="block text-sm font-medium text-white mb-2">
+                        <i class="fas fa-lock mr-1"></i>Confirm Password
+                    </label>
+                    <input type="password" name="password2" id="id_password2" required
+                           class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-white focus:border-transparent transition-all">
+                    <div class="mt-1 text-sm text-red-300 hidden" id="password2-error"></div>
+                </div>
+                
+
+                
+                <!-- Terms and Privacy -->
+                <div class="flex items-start">
+                    <input type="checkbox" id="terms" name="terms" required 
+                           class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 text-sm text-white">
+                        I agree to the <a href="#" class="text-blue-200 hover:text-white underline">Terms of Service</a> 
+                        and <a href="#" class="text-blue-200 hover:text-white underline">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-white text-green-600 py-3 text-lg font-semibold rounded-xl hover:bg-opacity-90 transition-all duration-200">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Create Account
+                </button>
+            </form>
+            
+
+            
+            <!-- Sign In Link -->
+            <div class="text-center mt-6">
+                <p class="text-sm text-white">
+                    Already have an account? 
+                    <a href="{% url 'users:login' %}" class="text-blue-200 hover:text-white font-medium">
+                        Sign in here
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Features Preview -->
+        <div class="text-center text-white">
+            <h3 class="text-lg font-semibold mb-4">What you'll get with AirSense:</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="flex items-center">
+                    <i class="fas fa-check text-green-300 mr-2"></i>
+                    <span>Real-time air quality alerts</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-check text-green-300 mr-2"></i>
+                    <span>NASA TEMPO satellite data</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-check text-green-300 mr-2"></i>
+                    <span>AI-powered predictions</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-check text-green-300 mr-2"></i>
+                    <span>Community action tools</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('register-form');
+    const fields = ['username', 'email', 'password1', 'password2'];
+    
+    // Form validation
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Clear previous errors
+            fields.forEach(field => {
+                document.getElementById(field + '-error').classList.add('hidden');
+            });
+            
+            // Validate required fields
+            fields.forEach(field => {
+                const input = document.getElementById('id_' + field);
+                if (!input.value.trim()) {
+                    document.getElementById(field + '-error').textContent = 'This field is required';
+                    document.getElementById(field + '-error').classList.remove('hidden');
+                    isValid = false;
+                }
+            });
+            
+            // Validate email format
+            const email = document.getElementById('id_email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email.value && !emailRegex.test(email.value)) {
+                document.getElementById('email-error').textContent = 'Please enter a valid email address';
+                document.getElementById('email-error').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // Validate password match
+            const password1 = document.getElementById('id_password1');
+            const password2 = document.getElementById('id_password2');
+            if (password1.value && password2.value && password1.value !== password2.value) {
+                document.getElementById('password2-error').textContent = 'Passwords do not match';
+                document.getElementById('password2-error').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // Check terms agreement
+            const terms = document.getElementById('terms');
+            if (!terms.checked) {
+                alert('Please agree to the Terms of Service and Privacy Policy');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            // Before submitting, perform a quick connectivity check to the server
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Checking...';
+            submitBtn.disabled = true;
+
+            const action = form.getAttribute('action') || window.location.pathname;
+            const fd = new FormData(form);
+
+            // Read CSRF token from cookie and include it in the header for the fetch
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken');
+
+            fetch(action, {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                }
+            }).then(response => {
+                if (response.status >= 200 && response.status < 400) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Creating Account...';
+                    form.submit();
+                } else {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    alert('Unable to create account (server error). Please try again later.');
+                }
+            }).catch(err => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                alert('Unable to reach server. Check your connection and try again.');
+                console.error('Connectivity check failed:', err);
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AirSense - NASA-Powered Air Quality Intelligence{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- NASA Badge -->
+        <div class="mb-8">
+            <span class="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-full text-sm font-medium backdrop-blur-sm">
+                <i class="fas fa-satellite mr-2"></i>
+                Powered by NASA TEMPO
+            </span>
+        </div>
+        
+        <!-- Main Headline -->
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Monitor <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">Air Quality</span>
+            <br>Live <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">Healthier</span>
+        </h1>
+        
+        <!-- Subtitle -->
+        <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+            Real-time air quality intelligence powered by NASA's TEMPO satellite data.
+        </p>
+        
+        <!-- Stats -->
+        <div class="mb-8">
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 max-w-md mx-auto">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold">73</div>
+                        <div class="text-sm opacity-75">Current AQI</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold">1.2K+</div>
+                        <div class="text-sm opacity-75">Cities</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold">50K+</div>
+                        <div class="text-sm opacity-75">Alerts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CTA Buttons -->
+        <div class="space-x-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard:home' %}" class="btn-primary text-lg px-8 py-4">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="btn-primary text-lg px-8 py-4">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Get Started
+                </a>
+                <a href="{% url 'landing:features' %}" class="btn-outline text-lg px-8 py-4 ml-4">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Learn More
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold theme-text mb-4">
+                Live Air Quality Intelligence
+            </h2>
+            <p class="text-xl theme-muted max-w-2xl mx-auto">
+                Real-time data from NASA's TEMPO satellite and ground sensors worldwide.
+            </p>
+        </div>
+        
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card text-center">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-leaf text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 theme-text">Health First</h3>
+                <p class="theme-muted mb-4">Personalized alerts based on your health profile and local conditions.</p>
+                <div class="text-2xl font-bold text-green-600">98%</div>
+                <div class="text-sm theme-muted">User satisfaction</div>
+            </div>
+            
+            <div class="card text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-brain text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 theme-text">AI-Powered</h3>
+                <p class="theme-muted mb-4">Machine learning models predict air quality trends up to 48 hours ahead.</p>
+                <div class="text-2xl font-bold text-blue-600">92%</div>
+                <div class="text-sm theme-muted">Prediction accuracy</div>
+            </div>
+            
+            <div class="card text-center">
+                <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 theme-text">Community</h3>
+                <p class="theme-muted mb-4">Join thousands taking action to improve air quality in their communities.</p>
+                <div class="text-2xl font-bold text-purple-600">15K+</div>
+                <div class="text-sm theme-muted">Active users</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-20 bg-light-hover dark:bg-dark-hover">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold theme-text mb-4">
+                How AirSense Works
+            </h2>
+            <p class="text-xl theme-muted max-w-2xl mx-auto">
+                From satellite to smartphone - your complete air quality solution.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-satellite text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 theme-text">1. Satellite Data</h3>
+                <p class="theme-muted">
+                    NASA TEMPO satellite monitors air quality across North America hourly with unprecedented detail.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-brain text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 theme-text">2. AI Processing</h3>
+                <p class="theme-muted">
+                    Advanced machine learning models process and predict air quality patterns with 92% accuracy.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-mobile-alt text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 theme-text">3. Your Dashboard</h3>
+                <p class="theme-muted">
+                    Get personalized insights, health alerts, and actionable recommendations on any device.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NASA Partnership -->
+<section class="py-20 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="mb-6">
+                    <span class="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-full text-sm font-medium backdrop-blur-sm">
+                        <i class="fas fa-handshake mr-2"></i>
+                        Official NASA Partner
+                    </span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Powered by NASA TEMPO
+                </h2>
+                <p class="text-xl text-blue-100 mb-6">
+                    AirSense leverages data from NASA's TEMPO satellite, providing unprecedented air quality monitoring from space.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-center">
+                        <i class="fas fa-satellite text-blue-300 mr-3"></i>
+                        Hourly measurements
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-globe-americas text-blue-300 mr-3"></i>
+                        North American coverage
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-microscope text-blue-300 mr-3"></i>
+                        2.1 km² resolution
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
+                    <i class="fas fa-satellite text-6xl mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">TEMPO Satellite</h3>
+                    <p class="text-blue-100 mb-6">
+                        First satellite to monitor air quality over North America hourly.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-3xl font-bold">2.1 km²</div>
+                            <div class="text-sm opacity-75">Resolution</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold">Hourly</div>
+                            <div class="text-sm opacity-75">Updates</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-green-600 to-blue-600 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Breathe Smarter?
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+            Join thousands using NASA-powered air quality intelligence.
+        </p>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard:home' %}" class="btn-secondary text-lg px-8 py-4">
+                <i class="fas fa-tachometer-alt mr-2"></i>
+                Go to Dashboard
+            </a>
+        {% else %}
+            <div class="space-x-4">
+                <a href="{% url 'users:register' %}" class="btn-secondary text-lg px-8 py-4">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Get Started Free
+                </a>
+                <a href="{% url 'landing:about' %}" class="btn-outline text-lg px-8 py-4">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Learn More
+                </a>
+            </div>
+            <p class="mt-6 opacity-75">
+                Free to use • No credit card required
+            </p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

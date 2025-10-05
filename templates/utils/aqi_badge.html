@@ -1,0 +1,6 @@
+<div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if size == 'small' %}text-xs px-2 py-0.5{% elif size == 'large' %}text-base px-4 py-2{% endif %}" 
+     style="background-color: {{ color }}20; color: {{ color }}; border: 1px solid {{ color }}40;">
+    <div class="w-2 h-2 rounded-full mr-2" style="background-color: {{ color }};"></div>
+    <span>{{ aqi|floatformat:0 }} AQI</span>
+    <span class="ml-1 opacity-75">{{ category }}</span>
+</div>

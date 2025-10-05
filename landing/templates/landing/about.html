@@ -1,0 +1,451 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About EcoSky - NASA TEMPO Partnership{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, rgba(11, 61, 145, 0.9), rgba(102, 51, 153, 0.8)), 
+                    url('{% static "images/nasa-earth-view.jpg" %}') center/cover;
+    }
+    
+    .timeline-item {
+        transition: all 0.3s ease;
+    }
+    
+    .timeline-item:hover {
+        transform: translateX(10px);
+    }
+    
+    .team-member {
+        transition: all 0.3s ease;
+    }
+    
+    .team-member:hover {
+        transform: translateY(-10px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero min-h-screen flex items-center justify-center text-white relative">
+    <div class="absolute inset-0 stars-bg opacity-30"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="nasa-badge inline-block mb-8">
+            <i class="fas fa-handshake mr-2"></i>
+            Official NASA Partnership
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            About <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">EcoSky</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+            Born from a partnership with NASA, EcoSky transforms satellite data into actionable 
+            air quality intelligence for healthier communities worldwide.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div class="glass rounded-lg p-6">
+                <div class="text-3xl font-bold mb-2">2023</div>
+                <div class="text-blue-200">Founded</div>
+            </div>
+            <div class="glass rounded-lg p-6">
+                <div class="text-3xl font-bold mb-2">15K+</div>
+                <div class="text-blue-200">Active Users</div>
+            </div>
+            <div class="glass rounded-lg p-6">
+                <div class="text-3xl font-bold mb-2">1,200+</div>
+                <div class="text-blue-200">Cities Monitored</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                    Our Mission
+                </h2>
+                <p class="text-xl text-gray-600 mb-6">
+                    To democratize access to accurate, real-time air quality information and empower 
+                    communities to make informed decisions about their health and environment.
+                </p>
+                <p class="text-gray-600 mb-8">
+                    We believe that everyone deserves to breathe clean air and have access to the 
+                    information needed to protect their health. By combining NASA's cutting-edge 
+                    satellite technology with advanced AI and community engagement tools, we're 
+                    making air quality monitoring accessible to all.
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-eye text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Transparency</h3>
+                            <p class="text-gray-600">Open access to accurate, real-time air quality data</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-users text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Community</h3>
+                            <p class="text-gray-600">Empowering communities to take collective action</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-rocket text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Innovation</h3>
+                            <p class="text-gray-600">Leveraging cutting-edge technology for environmental good</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-8">
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-globe-americas text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Global Impact</h3>
+                    <p class="text-gray-600 mb-6">
+                        Our platform has helped reduce air pollution exposure for thousands of users 
+                        across North America, with plans to expand globally.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-600">40%</div>
+                            <div class="text-sm text-gray-500">Reduction in exposure</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-green-600">50K+</div>
+                            <div class="text-sm text-gray-500">Health alerts sent</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NASA Partnership -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Partnership with NASA
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                EcoSky is built on the foundation of NASA's TEMPO satellite mission, 
+                bringing space-grade air quality monitoring to everyone.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="nasa-card p-8">
+                <div class="flex items-center mb-6">
+                    <img src="{% static 'images/nasa-logo.png' %}" alt="NASA Logo" class="h-12 mr-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">NASA TEMPO Mission</h3>
+                        <p class="text-gray-600">Tropospheric Emissions: Monitoring of Pollution</p>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 mb-6">
+                    TEMPO is the first satellite instrument to monitor air quality over North America 
+                    hourly during daytime. Launched in 2023, it provides unprecedented detail about 
+                    air pollution from space.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">2.1 km²</div>
+                        <div class="text-sm text-gray-600">Spatial Resolution</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">Hourly</div>
+                        <div class="text-sm text-gray-600">Data Updates</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">
+                    How We Use TEMPO Data
+                </h3>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <span class="text-blue-600 font-bold text-sm">1</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Real-Time Data Ingestion</h4>
+                            <p class="text-gray-600">
+                                We receive and process TEMPO satellite data every hour, providing 
+                                the most up-to-date air quality information available.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <span class="text-green-600 font-bold text-sm">2</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">AI Enhancement</h4>
+                            <p class="text-gray-600">
+                                Our machine learning models enhance satellite data with ground-based 
+                                measurements and weather data for improved accuracy.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                            <span class="text-purple-600 font-bold text-sm">3</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">User-Friendly Interface</h4>
+                            <p class="text-gray-600">
+                                Complex satellite data is transformed into easy-to-understand 
+                                visualizations and actionable health recommendations.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Our Journey
+            </h2>
+            <p class="text-xl text-gray-600">
+                From concept to global platform - the EcoSky story
+            </p>
+        </div>
+        
+        <div class="relative">
+            <!-- Timeline line -->
+            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-blue-200"></div>
+            
+            <div class="space-y-12">
+                <div class="timeline-item flex items-start">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-8 relative z-10">
+                        2023
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Project Launch</h3>
+                        <p class="text-gray-600 mb-4">
+                            EcoSky was founded with the vision of making NASA's air quality data 
+                            accessible to everyone. Initial partnership with NASA TEMPO mission established.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">NASA Partnership</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">MVP Development</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item flex items-start">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-8 relative z-10">
+                        Q2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Beta Launch</h3>
+                        <p class="text-gray-600 mb-4">
+                            Public beta launched with real-time air quality monitoring for major 
+                            North American cities. First 1,000 users onboarded.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">Public Beta</span>
+                            <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">1K Users</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item flex items-start">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-8 relative z-10">
+                        Q3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">AI Integration</h3>
+                        <p class="text-gray-600 mb-4">
+                            Advanced machine learning models deployed for air quality predictions. 
+                            Achieved 92% prediction accuracy for 24-hour forecasts.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">AI Predictions</span>
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">92% Accuracy</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item flex items-start">
+                    <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold mr-8 relative z-10">
+                        Q4
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Community Features</h3>
+                        <p class="text-gray-600 mb-4">
+                            Launched community engagement tools, environmental action recommendations, 
+                            and scenario simulator. Reached 15,000 active users.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm">Community Tools</span>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">15K Users</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item flex items-start">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-8 relative z-10">
+                        2024
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Global Expansion</h3>
+                        <p class="text-gray-600 mb-4">
+                            Planning global expansion with additional satellite data sources. 
+                            API platform launch for developers and researchers.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Global Expansion</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">API Platform</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section class="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Our Values
+            </h2>
+            <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+                The principles that guide everything we do at EcoSky
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-heart text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Health First</h3>
+                <p class="text-blue-100">
+                    Every feature we build is designed with human health and wellbeing as the top priority.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-microscope text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Scientific Accuracy</h3>
+                <p class="text-blue-100">
+                    We maintain the highest standards of scientific rigor in all our data and predictions.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-globe text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Environmental Justice</h3>
+                <p class="text-blue-100">
+                    We believe clean air is a fundamental right and work to make our platform accessible to all.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            Join Our Mission
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+            Be part of the movement to make air quality information accessible to everyone. 
+            Together, we can build healthier communities.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'users:register' %}" class="btn-primary text-lg px-8 py-4">
+                <i class="fas fa-user-plus mr-2"></i>
+                Join EcoSky
+            </a>
+            <a href="{% url 'landing:contact' %}" class="btn-outline text-lg px-8 py-4">
+                <i class="fas fa-envelope mr-2"></i>
+                Get in Touch
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate timeline items on scroll
+    const observerOptions = {
+        threshold: 0.3,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = '0.2s';
+                entry.target.classList.add('animate-fade-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe timeline items
+    document.querySelectorAll('.timeline-item').forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.2}s`;
+        observer.observe(item);
+    });
+    
+    // Add hover effects to timeline items
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(10px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

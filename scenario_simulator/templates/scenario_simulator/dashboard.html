@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Scenario Simulator{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Scenario Simulator</h1>
+        
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-plus-circle text-blue-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Create New Scenario</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Design custom air quality scenarios</p>
+                <a href="{% url 'scenario_simulator:create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Create Scenario</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-layer-group text-green-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Templates</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ popular_templates.count }} pre-built templates</p>
+                <a href="{% url 'scenario_simulator:templates' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Templates</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-chart-bar text-purple-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">My Scenarios</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{% if user_scenarios %}{{ user_scenarios.count }} scenarios{% else %}No scenarios yet{% endif %}</p>
+                <a href="{% url 'scenario_simulator:my_scenarios' %}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">View Scenarios</a>
+            </div>
+        </div>
+        
+        <!-- Popular Templates -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Popular Templates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for template in popular_templates %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <span class="px-2 py-1 bg-{{ template.complexity_level|default:'blue' }}-100 text-{{ template.complexity_level|default:'blue' }}-800 text-xs rounded-full mr-2">
+                            {{ template.get_complexity_level_display }}
+                        </span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
+                            {{ template.get_scenario_type_display }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">{{ template.name }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ template.description|truncatewords:20 }}</p>
+                    <a href="{% url 'scenario_simulator:create_from_template' template.id %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Use Template →
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">No templates available yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Recent Results -->
+        {% if recent_results %}
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Recent Results</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                {% for scenario in recent_results %}
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-semibold">{{ scenario.name }}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ scenario.location }} • Completed {{ scenario.completed_at|timesince }} ago</p>
+                        </div>
+                        <a href="{% url 'scenario_simulator:results' scenario.id %}" class="text-blue-600 hover:text-blue-800 text-sm">
+                            View Results
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

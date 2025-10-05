@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Environmental Policies{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Environmental Policies</h1>
+        <div class="text-center py-12">
+            <p class="text-gray-600 dark:text-gray-400">Policy recommendations coming soon!</p>
+            <a href="{% url 'eco_action:dashboard' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

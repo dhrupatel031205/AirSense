@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block title %}Social Impact{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Social Impact Dashboard</h1>
+        
+        <!-- User Stats -->
+        {% if user_stats %}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-trophy text-yellow-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ user_stats.total_points }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Total Points</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-edit text-blue-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ user_stats.posts_count }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Posts Shared</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-medal text-green-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ user_stats.challenges_completed }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Challenges Done</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-purple-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ recent_reports.count }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Reports Filed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Main Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-comments text-blue-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Community Feed</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ recent_posts.count }} recent posts</p>
+                <a href="{% url 'social_impact:feed' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View Feed</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-users text-green-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Groups</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ popular_groups.count }} active groups</p>
+                <a href="{% url 'social_impact:groups' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Groups</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-flag text-purple-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Challenges</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ active_challenges.count }} active challenges</p>
+                <a href="{% url 'social_impact:challenges' %}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">View Challenges</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-file-alt text-orange-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Reports</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Submit air quality reports</p>
+                <a href="{% url 'social_impact:create_report' %}" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">Create Report</a>
+            </div>
+        </div>
+        
+        <!-- Active Challenges -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Active Environmental Challenges</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for challenge in active_challenges %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div class="flex items-center mb-3">
+                        <span class="px-2 py-1 bg-{{ challenge.difficulty }}-100 text-{{ challenge.difficulty }}-800 text-xs rounded-full mr-2">
+                            {{ challenge.get_difficulty_display }}
+                        </span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            {{ challenge.points_reward }} points
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">{{ challenge.title }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ challenge.description|truncatewords:20 }}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">{{ challenge.participant_count }} participants</span>
+                        <a href="{% url 'social_impact:challenge_detail' challenge.id %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            Join Challenge
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Popular Groups -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Popular Community Groups</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for group in popular_groups %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">{{ group.name }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">{{ group.location }}</p>
+                        </div>
+                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                            {{ group.member_count }} members
+                        </span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">{{ group.description|truncatewords:20 }}</p>
+                    <a href="{% url 'social_impact:group_detail' group.id %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View Group →
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Recent Posts -->
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Recent Community Posts</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                {% for post in recent_posts %}
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-sm font-medium">{{ post.author.first_name|first|default:post.author.username|first|upper }}</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-sm">{{ post.author.get_full_name|default:post.author.username }}</p>
+                                    <p class="text-xs text-gray-500">{{ post.created_at|timesince }} ago</p>
+                                </div>
+                            </div>
+                            <h3 class="font-semibold mb-1">{{ post.title }}</h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-2">{{ post.content|truncatewords:25 }}</p>
+                            {% if post.location %}
+                            <p class="text-xs text-gray-500">
+                                <i class="fas fa-map-marker-alt mr-1"></i>{{ post.location }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500 mb-1">{{ post.like_count }} likes</p>
+                            <a href="{% url 'social_impact:post_detail' post.id %}" class="text-blue-600 hover:text-blue-800 text-sm">
+                                View Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

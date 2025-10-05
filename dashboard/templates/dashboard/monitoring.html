@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Monitoring - AirSense{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Air Quality Monitoring</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Real-time air quality data for your locations</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Current Readings -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Live Monitoring</h2>
+                    
+                    <!-- Location Selector -->
+                    <div class="mb-6">
+                        <select class="form-input" id="location-selector">
+                            {% for location in user_locations %}
+                            <option value="{{ location.id }}" {% if location.is_primary %}selected{% endif %}>
+                                {{ location.location_name }}
+                            </option>
+                            {% empty %}
+                            <option value="">Add a location first</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- AQI Chart -->
+                    <div class="mb-6">
+                        <canvas id="aqi-chart" class="w-full h-64"></canvas>
+                    </div>
+                    
+                    <!-- Pollutant Details -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600" id="pm25-value">25</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">PM2.5</div>
+                            <div class="text-xs text-gray-500">μg/m³</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600" id="pm10-value">35</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">PM10</div>
+                            <div class="text-xs text-gray-500">μg/m³</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600" id="no2-value">45</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">NO₂</div>
+                            <div class="text-xs text-gray-500">ppb</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="text-2xl font-bold text-orange-600" id="o3-value">55</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">O₃</div>
+                            <div class="text-xs text-gray-500">ppb</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Side Panel -->
+            <div class="space-y-6">
+                <!-- Current Status -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Status</h3>
+                    <div class="text-center mb-4">
+                        <div class="text-4xl font-bold text-green-600" id="current-aqi">73</div>
+                        <div class="text-lg text-gray-600 dark:text-gray-400" id="aqi-category">Moderate</div>
+                    </div>
+                    
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                        <div class="bg-gradient-to-r from-green-400 to-yellow-500 h-3 rounded-full" style="width: 73%"></div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-600 dark:text-gray-400 text-center">
+                        Last updated: <span id="last-updated">{{ current_time|date:"H:i" }}</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="{% url 'dashboard:add_location' %}" class="block w-full btn-primary text-center">
+                            <i class="fas fa-plus mr-2"></i>Add Location
+                        </a>
+                        <button onclick="refreshData()" class="block w-full btn-outline text-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh Data
+                        </button>
+                        <a href="{% url 'health_alerts:settings' %}" class="block w-full btn-outline text-center">
+                            <i class="fas fa-bell mr-2"></i>Alert Settings
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Data Sources -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Data Sources</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-400">NASA TEMPO Satellite</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-400">Ground Sensors</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-400">ML Predictions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let aqiChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChart();
+    loadMonitoringData();
+    
+    // Update every 5 minutes
+    setInterval(loadMonitoringData, 300000);
+});
+
+function initializeChart() {
+    const ctx = document.getElementById('aqi-chart');
+    if (!ctx) return;
+    
+    aqiChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            datasets: [{
+                label: 'AQI',
+                data: generateSampleData(),
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 200
+                }
+            }
+        }
+    });
+}
+
+function generateSampleData() {
+    // Generate sample data for demo
+    const baseAQI = 73;
+    return Array.from({length: 24}, () => 
+        baseAQI + Math.random() * 40 - 20
+    );
+}
+
+function loadMonitoringData() {
+    // Simulate data loading
+    const currentAQI = 73 + Math.random() * 20 - 10;
+    document.getElementById('current-aqi').textContent = Math.round(currentAQI);
+    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+    
+    // Update chart
+    if (aqiChart) {
+        aqiChart.data.datasets[0].data = generateSampleData();
+        aqiChart.update();
+    }
+}
+
+function refreshData() {
+    EcoSky.showInfo('Refreshing monitoring data...');
+    loadMonitoringData();
+    setTimeout(() => {
+        EcoSky.showSuccess('Data refreshed successfully!');
+    }, 1000);
+}
+</script>
+{% endblock %}

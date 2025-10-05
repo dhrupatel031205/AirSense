@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}Eco Action{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Eco Action Dashboard</h1>
+        
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-gavel text-blue-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ featured_policies.count }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Active Policies</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-users text-green-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ upcoming_actions.count }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Upcoming Actions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-lightbulb text-yellow-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{{ featured_tips.count }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Featured Tips</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-leaf text-purple-600 text-2xl mr-3"></i>
+                    <div>
+                        <p class="text-2xl font-bold">{% if user_profile %}{{ user_profile.actions_participated }}{% else %}0{% endif %}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Your Actions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-gavel text-blue-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Environmental Policies</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Review and provide feedback on policies</p>
+                <a href="{% url 'eco_action:policies' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View Policies</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-users text-green-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Community Actions</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Join local environmental initiatives</p>
+                <a href="{% url 'eco_action:community_actions' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Actions</a>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-lightbulb text-purple-600 text-2xl mr-3"></i>
+                    <h2 class="text-xl font-semibold">Eco Tips</h2>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Learn sustainable practices</p>
+                <a href="{% url 'eco_action:tips' %}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">View Tips</a>
+            </div>
+        </div>
+        
+        <!-- Featured Policies -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Featured Policies</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for policy in featured_policies %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div class="flex items-center mb-3">
+                        <span class="px-2 py-1 bg-{{ policy.impact_level }}-100 text-{{ policy.impact_level }}-800 text-xs rounded-full mr-2">
+                            {{ policy.get_impact_level_display }}
+                        </span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
+                            {{ policy.get_policy_type_display }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">{{ policy.title }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ policy.description|truncatewords:25 }}</p>
+                    <a href="{% url 'eco_action:policy_detail' policy.id %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Learn More →
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Upcoming Actions -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Upcoming Community Actions</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                {% for action in upcoming_actions %}
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">{{ action.title }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{{ action.location }} • {{ action.start_date|date:"M d, Y" }}</p>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm">{{ action.description|truncatewords:20 }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500 mb-2">{{ action.participant_count }}/{{ action.max_participants }} participants</p>
+                            <a href="{% url 'eco_action:action_detail' action.id %}" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                                Join Action
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Featured Tips -->
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Featured Eco Tips</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for tip in featured_tips %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <div class="flex items-center mb-3">
+                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full mr-2">
+                            {{ tip.get_difficulty_level_display }}
+                        </span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            {{ tip.get_category_display }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">{{ tip.title }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ tip.content|truncatewords:15 }}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-500">{{ tip.estimated_impact }}</span>
+                        <a href="{% url 'eco_action:tip_detail' tip.id %}" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Read More
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

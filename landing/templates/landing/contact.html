@@ -1,0 +1,460 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - EcoSky{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-hero {
+        background: linear-gradient(135deg, rgba(11, 61, 145, 0.9), rgba(102, 51, 153, 0.8)), 
+                    url('{% static "images/earth-communication.jpg" %}') center/cover;
+    }
+    
+    .contact-card {
+        transition: all 0.3s ease;
+    }
+    
+    .contact-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="contact-hero py-20 text-white relative">
+    <div class="absolute inset-0 stars-bg opacity-20"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="nasa-badge inline-block mb-8">
+            <i class="fas fa-satellite-dish mr-2"></i>
+            Get in Touch
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Contact <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">EcoSky</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+            Have questions about air quality data, need technical support, or want to partner with us? 
+            We'd love to hear from you.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Options -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div class="contact-card nasa-card text-center p-8">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-envelope text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">General Inquiries</h3>
+                <p class="text-gray-600 mb-4">
+                    Questions about EcoSky, partnerships, or general information.
+                </p>
+                <a href="mailto:hello@ecosky.com" class="text-blue-600 hover:text-blue-500 font-medium">
+                    hello@ecosky.com
+                </a>
+            </div>
+            
+            <div class="contact-card nasa-card text-center p-8">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-life-ring text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Technical Support</h3>
+                <p class="text-gray-600 mb-4">
+                    Need help with your account, API, or technical issues?
+                </p>
+                <a href="mailto:support@ecosky.com" class="text-green-600 hover:text-green-500 font-medium">
+                    support@ecosky.com
+                </a>
+            </div>
+            
+            <div class="contact-card nasa-card text-center p-8">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-handshake text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Partnerships</h3>
+                <p class="text-gray-600 mb-4">
+                    Interested in collaborating or integrating with EcoSky?
+                </p>
+                <a href="mailto:partnerships@ecosky.com" class="text-purple-600 hover:text-purple-500 font-medium">
+                    partnerships@ecosky.com
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Send Us a Message
+            </h2>
+            <p class="text-xl text-gray-600">
+                Fill out the form below and we'll get back to you within 24 hours.
+            </p>
+        </div>
+        
+        <div class="nasa-card p-8">
+            <form id="contact-form" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1"></i>Full Name *
+                        </label>
+                        <input type="text" id="name" name="name" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-envelope mr-1"></i>Email Address *
+                        </label>
+                        <input type="email" id="email" name="email" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-tag mr-1"></i>Subject *
+                    </label>
+                    <select id="subject" name="subject" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        <option value="">Select a subject</option>
+                        <option value="general">General Inquiry</option>
+                        <option value="support">Technical Support</option>
+                        <option value="partnership">Partnership Opportunity</option>
+                        <option value="api">API Access</option>
+                        <option value="research">Research Collaboration</option>
+                        <option value="media">Media Inquiry</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="organization" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-building mr-1"></i>Organization (Optional)
+                    </label>
+                    <input type="text" id="organization" name="organization"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                </div>
+                
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-comment mr-1"></i>Message *
+                    </label>
+                    <textarea id="message" name="message" rows="6" required
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                              placeholder="Tell us how we can help you..."></textarea>
+                </div>
+                
+                <div class="flex items-start">
+                    <input type="checkbox" id="newsletter" name="newsletter"
+                           class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="newsletter" class="ml-2 text-sm text-gray-600">
+                        I'd like to receive updates about EcoSky features and air quality insights
+                    </label>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" 
+                            class="btn-primary text-lg px-8 py-4 w-full md:w-auto">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Frequently Asked Questions
+            </h2>
+            <p class="text-xl text-gray-600">
+                Quick answers to common questions about EcoSky
+            </p>
+        </div>
+        
+        <div class="space-y-6">
+            <div class="nasa-card p-6">
+                <button class="faq-toggle w-full text-left flex items-center justify-between" data-target="faq-1">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        How accurate is the air quality data from NASA TEMPO?
+                    </h3>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="faq-1" class="faq-content hidden mt-4 text-gray-600">
+                    <p>
+                        NASA TEMPO provides highly accurate air quality measurements with a spatial resolution of 2.1 km² 
+                        and hourly updates during daytime. Our platform enhances this data with ground-based measurements 
+                        and machine learning models to achieve over 92% prediction accuracy.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-6">
+                <button class="faq-toggle w-full text-left flex items-center justify-between" data-target="faq-2">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        Is EcoSky free to use?
+                    </h3>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="faq-2" class="faq-content hidden mt-4 text-gray-600">
+                    <p>
+                        Yes! EcoSky offers a free tier that includes basic air quality monitoring, health alerts, 
+                        and community features. We also offer premium plans for advanced features like extended 
+                        forecasts, API access, and detailed analytics.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-6">
+                <button class="faq-toggle w-full text-left flex items-center justify-between" data-target="faq-3">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        Can I access EcoSky data through an API?
+                    </h3>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="faq-3" class="faq-content hidden mt-4 text-gray-600">
+                    <p>
+                        Absolutely! We provide a comprehensive REST API for developers, researchers, and organizations. 
+                        Our API includes real-time and historical air quality data, predictions, and webhook support. 
+                        Contact us for API access and documentation.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-6">
+                <button class="faq-toggle w-full text-left flex items-center justify-between" data-target="faq-4">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        Which geographic areas does EcoSky cover?
+                    </h3>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="faq-4" class="faq-content hidden mt-4 text-gray-600">
+                    <p>
+                        Currently, EcoSky covers North America with plans for global expansion. NASA TEMPO monitors 
+                        air quality from Mexico to Canada, providing comprehensive coverage for the United States, 
+                        Canada, and parts of Mexico.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-6">
+                <button class="faq-toggle w-full text-left flex items-center justify-between" data-target="faq-5">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        How can I contribute to air quality improvement in my community?
+                    </h3>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="faq-5" class="faq-content hidden mt-4 text-gray-600">
+                    <p>
+                        EcoSky provides personalized environmental action recommendations, connects you with local 
+                        initiatives, and offers tools to advocate for policy changes. You can also use our scenario 
+                        simulator to understand the impact of different actions on air quality.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Office Information -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Visit Our Office
+            </h2>
+            <p class="text-xl text-gray-600">
+                Located in the heart of the tech community
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="nasa-card p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">EcoSky Headquarters</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <i class="fas fa-map-marker-alt text-blue-600 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Address</p>
+                            <p class="text-gray-600">
+                                123 Innovation Drive<br>
+                                Tech Valley, CA 94000<br>
+                                United States
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <i class="fas fa-phone text-green-600 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Phone</p>
+                            <p class="text-gray-600">+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <i class="fas fa-clock text-purple-600 mr-3 mt-1"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Office Hours</p>
+                            <p class="text-gray-600">
+                                Monday - Friday: 9:00 AM - 6:00 PM PST<br>
+                                Saturday - Sunday: Closed
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nasa-card p-8">
+                <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg p-6 text-center">
+                    <i class="fas fa-building text-6xl text-blue-600 mb-6"></i>
+                    <h4 class="text-xl font-bold text-gray-900 mb-4">Schedule a Visit</h4>
+                    <p class="text-gray-600 mb-6">
+                        Interested in seeing our operations firsthand? We offer tours for researchers, 
+                        partners, and educational groups.
+                    </p>
+                    <a href="mailto:visits@ecosky.com" class="btn-primary">
+                        <i class="fas fa-calendar mr-2"></i>
+                        Schedule Tour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Contact form handling
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                organization: formData.get('organization'),
+                message: formData.get('message'),
+                newsletter: formData.get('newsletter') ? true : false
+            };
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                EcoSky.showSuccess('Thank you for your message! We will get back to you within 24 hours.');
+                contactForm.reset();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+    }
+    
+    // FAQ toggle functionality
+    document.querySelectorAll('.faq-toggle').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const content = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (content.classList.contains('hidden')) {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-content').forEach(faq => {
+                    faq.classList.add('hidden');
+                });
+                document.querySelectorAll('.faq-toggle i').forEach(i => {
+                    i.classList.remove('rotate-180');
+                });
+                
+                // Open this FAQ
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                // Close this FAQ
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        });
+    });
+    
+    // Form validation
+    const requiredFields = contactForm.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('border-red-500');
+            } else {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-green-500');
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-green-500');
+            }
+        });
+    });
+    
+    // Email validation
+    const emailField = document.getElementById('email');
+    if (emailField) {
+        emailField.addEventListener('blur', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.value && !emailRegex.test(this.value)) {
+                this.classList.add('border-red-500');
+                this.classList.remove('border-green-500');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

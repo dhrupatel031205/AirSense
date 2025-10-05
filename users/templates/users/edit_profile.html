@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - AirSense{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Update your profile information and preferences</p>
+        </div>
+        
+        <div class="card">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.phone_number.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Location
+                        </label>
+                        {{ form.location }}
+                        {% if form.location.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.location.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="{{ form.notification_preferences.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Notification Preferences
+                    </label>
+                    {{ form.notification_preferences }}
+                    {% if form.notification_preferences.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.notification_preferences.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.health_conditions.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Health Conditions
+                        <span class="text-sm font-normal text-gray-500">(Optional - helps us provide better recommendations)</span>
+                    </label>
+                    {{ form.health_conditions }}
+                    {% if form.health_conditions.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.health_conditions.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="flex justify-between">
+                    <a href="{% url 'users:profile' %}" class="btn-outline">
+                        <i class="fas fa-arrow-left mr-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save mr-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Form styling */
+input, textarea, select {
+    @apply w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+</style>
+{% endblock %}

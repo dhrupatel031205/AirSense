@@ -1,0 +1,521 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - AirSense{% endblock %}
+
+{% block extra_css %}
+<style>
+.card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+.aqi-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pulse-ring {
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                        Welcome back, {{ user.first_name|default:user.username }}! 👋
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">
+                        Here's your personalized air quality intelligence for today.
+                    </p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Last updated: <span id="last-updated">{{ current_time|date:"H:i" }}</span>
+                    </div>
+                    <button onclick="refreshDashboard()" 
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200" id="refresh-btn">
+                        <i class="fas fa-sync-alt mr-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Current AQI Card -->
+            <div class="card lg:col-span-1">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Current Air Quality</h2>
+                    <div class="w-3 h-3 bg-green-500 rounded-full pulse-ring"></div>
+                </div>
+                
+                <div class="text-center mb-6" id="current-aqi-display">
+                    <div class="text-6xl font-bold mb-2 aqi-display" id="aqi-value">{{ current_aqi|default:73 }}</div>
+                    <div class="text-lg text-gray-600 dark:text-gray-400 mb-1" id="aqi-category">{{ daily_summary.category|default:"Moderate"|title }}</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-500" id="location-name">{{ location|default:"Your Location" }}</div>
+                </div>
+                
+                <!-- AQI Progress Bar -->
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                    <div class="bg-gradient-to-r from-green-400 to-yellow-500 h-3 rounded-full transition-all duration-1000" style="width: {{ current_aqi|default:73 }}%"></div>
+                </div>
+                
+                <!-- Health Recommendation -->
+                {% if ml_predictions.health_recommendations %}
+                <div class="p-4 rounded-lg border-l-4" style="background-color: {{ ml_predictions.health_recommendations.severity_color }}15; border-color: {{ ml_predictions.health_recommendations.severity_color }}">
+                    <div class="flex items-start">
+                        <i class="fas fa-heartbeat mr-2 mt-1" style="color: {{ ml_predictions.health_recommendations.severity_color }}"></i>
+                        <div class="text-sm">
+                            <p class="font-medium" style="color: {{ ml_predictions.health_recommendations.severity_color }}">{{ ml_predictions.health_recommendations.category|title }} Air Quality</p>
+                            <p class="text-gray-600 dark:text-gray-400" id="health-recommendation">
+                                {{ ml_predictions.health_recommendations.recommendations.0|default:"Monitor air quality conditions." }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-400">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-yellow-600 mr-2 mt-1"></i>
+                        <div class="text-sm">
+                            <p class="font-medium text-yellow-800 dark:text-yellow-200">Air quality is acceptable</p>
+                            <p class="text-yellow-700 dark:text-yellow-300" id="health-recommendation">
+                                Most people can enjoy normal outdoor activities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="card">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Today's Overview</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-chart-line text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <span class="text-gray-600 dark:text-gray-400">Trend</span>
+                        </div>
+                        {% if daily_summary.forecast %}
+                        <div class="flex items-center {% if daily_summary.forecast.trend == 'improving' %}text-green-600{% elif daily_summary.forecast.trend == 'worsening' %}text-red-600{% else %}text-gray-600{% endif %}">
+                            <i class="fas {% if daily_summary.forecast.trend == 'improving' %}fa-arrow-down{% elif daily_summary.forecast.trend == 'worsening' %}fa-arrow-up{% else %}fa-minus{% endif %} mr-1"></i>
+                            <span class="font-semibold">{{ daily_summary.forecast.trend|title }}</span>
+                        </div>
+                        {% else %}
+                        <div class="flex items-center text-green-600">
+                            <i class="fas fa-arrow-down mr-1"></i>
+                            <span class="font-semibold">Stable</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-clock text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <span class="text-gray-600 dark:text-gray-400">Peak Time</span>
+                        </div>
+                        <span class="font-semibold text-gray-900 dark:text-white">2:00 PM</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-running text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <span class="text-gray-600 dark:text-gray-400">Best Exercise</span>
+                        </div>
+                        <span class="font-semibold text-gray-900 dark:text-white">7-9 AM</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weather Info -->
+            <div class="card">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Weather Conditions</h2>
+                
+                <div class="text-center mb-4" id="weather-display">
+                    <i class="fas fa-sun text-4xl text-yellow-500 mb-3"></i>
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1" id="temperature">{{ weather.temperature|default:24 }}°C</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400" id="weather-description">{{ weather.condition|default:"Partly Cloudy" }}</div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="text-center">
+                        <i class="fas fa-eye text-gray-400 mb-1"></i>
+                        <div class="font-medium text-gray-900 dark:text-white" id="visibility">{{ weather.visibility|default:10 }} km</div>
+                        <div class="text-gray-500 dark:text-gray-400">Visibility</div>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-wind text-gray-400 mb-1"></i>
+                        <div class="font-medium text-gray-900 dark:text-white" id="wind-speed">{{ weather.wind_speed|default:15 }} km/h</div>
+                        <div class="text-gray-500 dark:text-gray-400">Wind</div>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-tint text-gray-400 mb-1"></i>
+                        <div class="font-medium text-gray-900 dark:text-white" id="humidity">{{ weather.humidity|default:65 }}%</div>
+                        <div class="text-gray-500 dark:text-gray-400">Humidity</div>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-thermometer-half text-gray-400 mb-1"></i>
+                        <div class="font-medium text-gray-900 dark:text-white" id="pressure">{{ weather.pressure|default:1013 }} hPa</div>
+                        <div class="text-gray-500 dark:text-gray-400">Pressure</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Second Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- AI Predictions -->
+            <div class="card">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">24-Hour Forecast</h2>
+                
+                <div class="mb-4">
+                    <canvas id="prediction-chart" class="w-full h-48"></canvas>
+                </div>
+                
+                <div class="space-y-3" id="prediction-summary">
+                    {% if predictions_data %}
+                        {% for pred in predictions_data %}
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">{{ pred.hours_ahead }} hours</span>
+                            <span class="font-semibold {% if pred.aqi < 50 %}text-green-600{% elif pred.aqi < 100 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                                {{ pred.category }} ({{ pred.aqi }} AQI)
+                            </span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600 dark:text-gray-400">Next 6 hours</span>
+                        <span data-prediction="6h" class="font-semibold text-green-600">Good (45 AQI)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600 dark:text-gray-400">12 hours ahead</span>
+                        <span data-prediction="12h" class="font-semibold text-yellow-600">Moderate (68 AQI)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600 dark:text-gray-400">24 hours ahead</span>
+                        <span data-prediction="24h" class="font-semibold text-orange-600">Unhealthy (125 AQI)</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fas fa-brain text-blue-600 dark:text-blue-400 mr-2 mt-1"></i>
+                        <div class="text-sm">
+                            <p class="font-medium text-blue-800 dark:text-blue-200">AI Insight</p>
+                            <p class="text-blue-700 dark:text-blue-300">Air quality will worsen tomorrow afternoon due to increased traffic and low wind speeds.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4" id="scenario-buttons">
+                    <!-- Scenario buttons will be added by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Health Assistant -->
+            <div class="card">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Health Assistant</h2>
+                <div id="health-chat-container">
+                    <div class="h-64 overflow-y-auto border rounded-lg p-4 mb-4 bg-gray-50 dark:bg-gray-700" id="chat-messages">
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <strong>Health Assistant:</strong> Hi! I'm here to help with air quality health questions. Ask me anything!
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <input type="text" id="chat-input" placeholder="Ask about air quality health..." 
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button onclick="sendChatMessage()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="/scenario-simulator/" 
+                   class="flex flex-col items-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-all duration-200 group">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-flask text-white"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Simulator</span>
+                </a>
+                
+                <a href="/eco-action/" 
+                   class="flex flex-col items-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-all duration-200 group">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-leaf text-white"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Eco Tips</span>
+                </a>
+                
+                <a href="/social-impact/" 
+                   class="flex flex-col items-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200 group">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-users text-white"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Community</span>
+                </a>
+                
+                <a href="/health-alerts/settings/" 
+                   class="flex flex-col items-center p-6 bg-orange-50 dark:bg-orange-900/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-all duration-200 group">
+                    <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-cog text-white"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Settings</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="chart-data" type="application/json">{{ chart_data|safe }}</script>
+<script>
+let predictionChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializePredictionChart();
+    if (typeof mlDashboard !== 'undefined') {
+        mlDashboard.loadInitialMLData();
+    }
+});
+
+function initializePredictionChart() {
+    const ctx = document.getElementById('prediction-chart');
+    if (!ctx) return;
+    
+    // Get chart data from template
+    const chartDataElement = document.getElementById('chart-data');
+    let chartData = { labels: [6, 12, 18, 24], data: [45, 68, 89, 125] };
+    
+    if (chartDataElement) {
+        try {
+            chartData = JSON.parse(chartDataElement.textContent);
+            console.log('Chart data loaded:', chartData);
+        } catch (e) {
+            console.warn('Could not parse chart data, using defaults:', e);
+        }
+    }
+    
+    const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
+    
+    // Get current AQI from page
+    const currentAqiElement = document.getElementById('aqi-value');
+    const currentAqi = currentAqiElement ? parseInt(currentAqiElement.textContent) : 73;
+    
+    const labels = ['Now'].concat(chartData.labels.map(h => h + 'h'));
+    const data = [currentAqi].concat(chartData.data);
+    
+    console.log('Chart labels:', labels);
+    console.log('Chart data:', data);
+    
+    predictionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Predicted AQI',
+                data: data,
+                borderColor: '#3b82f6',
+                backgroundColor: gradient,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: function(context) {
+                    const value = context.parsed.y;
+                    if (value < 50) return '#10b981';
+                    if (value < 100) return '#f59e0b';
+                    if (value < 150) return '#ef4444';
+                    return '#7c2d12';
+                },
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 200,
+                    grid: { color: 'rgba(0,0,0,0.1)' }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+}
+
+// Chatbot functionality
+function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Add user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'text-sm mb-2';
+    userMsg.innerHTML = `<strong>You:</strong> ${message}`;
+    chatMessages.appendChild(userMsg);
+    
+    // Clear input
+    input.value = '';
+    
+    // Show typing indicator
+    const typingMsg = document.createElement('div');
+    typingMsg.className = 'text-sm text-gray-500 mb-2';
+    typingMsg.innerHTML = '<strong>Health Assistant:</strong> <em>typing...</em>';
+    typingMsg.id = 'typing-indicator';
+    chatMessages.appendChild(typingMsg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Send to API
+    fetch('/dashboard/api/ml/chat/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ question: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove typing indicator
+        const typing = document.getElementById('typing-indicator');
+        if (typing) typing.remove();
+        
+        // Add bot response
+        const botMsg = document.createElement('div');
+        botMsg.className = 'text-sm text-gray-600 dark:text-gray-400 mb-2';
+        botMsg.innerHTML = `<strong>Health Assistant:</strong> ${data.response || getBotResponse(message)}`;
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Chat error:', error);
+        // Remove typing indicator
+        const typing = document.getElementById('typing-indicator');
+        if (typing) typing.remove();
+        
+        // Fallback response
+        const botMsg = document.createElement('div');
+        botMsg.className = 'text-sm text-gray-600 dark:text-gray-400 mb-2';
+        botMsg.innerHTML = `<strong>Health Assistant:</strong> ${getBotResponse(message)}`;
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function getBotResponse(message) {
+    const msg = message.toLowerCase();
+    
+    if (msg.includes('asthma') || msg.includes('breathing')) {
+        return 'For people with asthma, it\'s important to limit outdoor activities when AQI is above 100. Keep your inhaler handy and consider indoor exercises.';
+    }
+    if (msg.includes('exercise') || msg.includes('workout')) {
+        return 'Best times for outdoor exercise are early morning (6-8 AM) when air quality is typically better. Avoid exercising outdoors when AQI exceeds 150.';
+    }
+    if (msg.includes('children') || msg.includes('kids')) {
+        return 'Children are more sensitive to air pollution. Limit outdoor play when AQI is above 100 and ensure they stay hydrated.';
+    }
+    if (msg.includes('mask') || msg.includes('protection')) {
+        return 'N95 or P100 masks can help filter particles when AQI is high. Make sure the mask fits properly for maximum protection.';
+    }
+    if (msg.includes('symptoms')) {
+        return 'Common symptoms of poor air quality include coughing, throat irritation, and eye irritation. If symptoms persist, consult a healthcare provider.';
+    }
+    
+    return 'I can help with air quality health questions. Try asking about asthma, exercise, children\'s health, masks, or symptoms.';
+}
+
+// Allow Enter key to send messages
+document.addEventListener('DOMContentLoaded', function() {
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+    }
+});
+
+function refreshDashboard() {
+    const btn = document.getElementById('refresh-btn');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-1"></i>Updating...';
+    btn.disabled = true;
+    
+    // Simulate refresh
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+        
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+        alertDiv.textContent = 'Dashboard updated successfully!';
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }, 2000);
+}
+</script>
+{% endblock %}
